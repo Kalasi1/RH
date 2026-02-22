@@ -16,7 +16,18 @@ function fireBack(remote, times, ...)
 end
 
 local classFuncs = {
-    swimming = function() end,
+    swimming = function()
+        return {
+            classRemotes.Timer.OnClientEvent:Connect(function()
+                local hrp = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                hrp.CFrame = hrp.CFrame + Vector3.new(0, 10, 0)
+                hrp.Anchored = true
+                task.wait(55)
+                if hrp then hrp.Anchored = false end
+            end)
+        }
+    end,
     
     art = function() 
         local function getCanvasData()
@@ -62,12 +73,22 @@ local classFuncs = {
     end,
     
     english = function()
-        local label = localPlayer.PlayerGui.EnglishClass.Frame.question
+        local correctWords = {"Argument", "Enough", "Until", "Amateur", "Library", "Embarrassing", "Tongue", "Dessert", "February", "Accommodate", "a lot", "Beautiful"}
+
+        local frame = localPlayer.PlayerGui.EnglishClass.Frame
         return {
-            label:GetPropertyChangedSignal("Text"):Connect(function()
-                classRemotes.English:FireServer(label.Parent.D.Answer.Value)
+            frame.question:GetPropertyChangedSignal("Text"):Connect(function()
+                if frame.question.Text == "Please wait..." then return end
+                task.wait(0.1)
+                for _, name in {"A", "B", "C", "D"} do
+                    local answer = frame[name].Answer.Value
+                    if table.find(correctWords, answer) then
+                        classRemotes.English:FireServer(answer)
+                        break
+                    end
+                end
             end)
-        }   
+        }
     end,
 
     baking = function()

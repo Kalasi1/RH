@@ -23,6 +23,7 @@ local captchaMap = {
 function solve()
     local assetid = string.match(captcha.Top.Card.Image, "%d+")
     if assetid then
+        task.wait(math.random(5, 15))
         game:GetService("ReplicatedStorage"):WaitForChild("CaptchaRemote"):WaitForChild("SetupCaptcha"):FireServer(captchaMap[assetid])
     end
 end

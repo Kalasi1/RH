@@ -1,15 +1,30 @@
 local LP = game:GetService("Players").LocalPlayer
+local captchaGui = LP.PlayerGui.CardCaptchaGame
 local captcha = LP.PlayerGui.CardCaptchaGame.CaptchaGame
 
+local captchaMap = {
+    [15220541977] = 1,
+    [15220896509] = 2,
+    [15238170924] = 3,
+    [15246149118] = 4,
+    [15246674578] = 5,
+    [15270045569] = 6,
+    [15277668364] = 7,
+    [15277827984] = 8,
+    [15278319081] = 9,
+    [15278574393] = 10,
+    [15279290990] = 11,
+    [15279858892] = 12,
+    [15280238825] = 13,
+    [15280730515] = 14,
+    [15281069567] = 15,
+}
+
 function solve()
-    local res = game:HttpGetAsync(("http://204.10.194.65:4352/solve?id=%d&name=%s"):format(string.match(captcha.Top.Card.Image, "id=(%d+)"), LP.Name))
-    local data = game:GetService("HttpService"):JSONDecode(res)
-    if data and data.success and data.index > 0 then
-        for _,v in pairs(getconnections(captcha.Bottom.Buttons[tostring(data.index)].MouseButton1Click)) do v:Fire() end
+    local assetid = string.match(captcha.Top.Card.Image, "%d+")
+    if assetid then
+        game:GetService("ReplicatedStorage"):WaitForChild("CaptchaRemote"):WaitForChild("SetupCaptcha"):FireServer(captchaMap[assetid])
     end
 end
 
-while task.wait(60) do
-    if not captcha.Visible or string.find(captcha.Top.AttemptsRemaining.Text, "1 attempt") then continue end
-    xpcall(solve, print)
-end
+captchaGui:GetPropertyChangedSignal("Enabled"):Connect(solve)

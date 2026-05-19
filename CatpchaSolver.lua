@@ -1,16 +1,29 @@
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
-local LP = Players.LocalPlayer
-
--- Wait for GUI
-local captchaGui = LP.PlayerGui:WaitForChild("CardCaptchaGame")
-local captcha = captchaGui:WaitForChild("CaptchaGame")
-local topCard = captcha:WaitForChild("Top"):WaitForChild("Card")
-local remote = game:GetService("ReplicatedStorage"):WaitForChild("CaptchaRemote"):WaitForChild("SetupCaptcha")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SERVER_URL = "http://localhost:5000/solve"
 
+-- ========== WAIT FOR EVERYTHING TO LOAD ==========
+repeat task.wait() until game:IsLoaded()
+
+local LP = Players.LocalPlayer
+while not LP do task.wait(); LP = Players.LocalPlayer end
+
+local playerGui = LP:FindFirstChild("PlayerGui")
+while not playerGui do task.wait(); playerGui = LP:FindFirstChild("PlayerGui") end
+
+local captchaGui = playerGui:FindFirstChild("CardCaptchaGame")
+while not captchaGui do task.wait(); captchaGui = playerGui:FindFirstChild("CardCaptchaGame") end
+
+-- ========== SOLVE FUNCTION ==========
 local function solve()
+    local captcha = captchaGui:FindFirstChild("CaptchaGame")
+    if not captcha then return end
+    
+    local topCard = captcha:FindFirstChild("Top") and captcha.Top:FindFirstChild("Card")
+    if not topCard then return end
+    
     local url = topCard.Image
     local assetId = string.match(url, "id=(%d+)")
     if not assetId then
@@ -21,7 +34,7 @@ local function solve()
     print("Solving captcha for ID:", assetId)
     
     local success, response = pcall(function()
-        return game:HttpGet(SERVER_URL .. "?id=" .. assetId)
+        return game:HttpGet(SERVER_URL .. "?id=" .. assetId, 5)
     end)
     
     if not success then
@@ -32,18 +45,37 @@ local function solve()
     local data = HttpService:JSONDecode(response)
     if data and data.success and data.index then
         print("Match found! Firing button", data.index)
-        remote:FireServer(data.index)
+        
+        -- CORRECT REMOTE PATH
+        local remote = ReplicatedStorage:FindFirstChild("CaptchaRemote")
+        if remote then
+            local setup = remote:FindFirstChild("CaptchaAttempt")
+            if setup then
+                setup:FireServer(data.index)
+            else
+                warn("CaptchaAttempt not found")
+            end
+        else
+            warn("CaptchaRemote not found")
+        end
     else
         warn("Server error:", data and data.error or "Unknown")
     end
 end
 
--- Trigger when captcha appears
+-- ========== TRIGGER ==========
 captchaGui:GetPropertyChangedSignal("Enabled"):Connect(function()
     if captchaGui.Enabled then
-        task.wait(0.5)
+        task.wait(math.random(5, 15))
         pcall(solve)
     end
 end)
 
-print("Captcha solver ready. Waiting for captcha...")
+if captchaGui.Enabled then
+    task.spawn(function()
+        task.wait(math.random(5, 15))
+        pcall(solve)
+    end)
+end
+
+print("✅ Captcha solver ready. Waiting for captcha...")

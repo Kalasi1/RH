@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 if #Players:GetPlayers() > 1 then game:Shutdown() end
 Players.PlayerAdded:Connect(function() game:Shutdown() end)
 
--- game:GetService("RunService"):Set3dRenderingEnabled(false)
+game:GetService("RunService"):Set3dRenderingEnabled(false)
 
 local LP = Players.LocalPlayer
 for _,v in next, getconnections(LP.Idled) do v:Disable() end

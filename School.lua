@@ -192,30 +192,30 @@ localPlayer.ChildAdded:Connect(function(child)
             homework.Complete:FireServer()
             task.wait(.5)
             fireclickdetector(workspace:WaitForChild("Homeworkbox_" .. homework.Name, 10).Click.ClickDetector, 3)
-            if i == 3 then
-                task.wait(4)
-                local placeId = game.PlaceId
-                repeat
-                    services.ReplicatedStorage.SceptorTeleport:FireServer("BeachHouse")
-                    task.wait(5)
-                until game.PlaceId ~= placeId
-            end
+            -- if i == 3 then
+               -- task.wait(4)
+               -- local placeId = game.PlaceId
+               -- repeat
+                  --  services.ReplicatedStorage.SceptorTeleport:FireServer("BeachHouse")
+                --    task.wait(5)
+              --  until game.PlaceId ~= placeId
+            --end
         end
     end
 end)
 
-local time = localPlayer.PlayerGui.SchoolHUD.MainFrame.Time.Time
-time:GetPropertyChangedSignal("Value"):Connect(function()
-    if time.Value >= 15 and time.Value <= 23 then
-        local placeId = game.PlaceId
-        for i = 1, 5 do
-            if game.PlaceId == placeId then
-                services.ReplicatedStorage.SceptorTeleport:FireServer("BeachHouse")
-                task.wait(5)
-            end
-        end
-    end
-end)
+-- local time = localPlayer.PlayerGui.SchoolHUD.MainFrame.Time.Time
+-- time:GetPropertyChangedSignal("Value"):Connect(function()
+ --   if time.Value >= 15 and time.Value <= 23 then
+  --      local placeId = game.PlaceId
+   --     for i = 1, 5 do
+     --       if game.PlaceId == placeId then
+     --           services.ReplicatedStorage.SceptorTeleport:FireServer("BeachHouse")
+      --          task.wait(5)
+     --       end
+    --    end
+--    end
+--end)
 
 local function getLocker()
     local closestMag = math.huge; local closetLocker;

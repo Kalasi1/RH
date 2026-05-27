@@ -287,7 +287,7 @@ end)
 local time = localPlayer.PlayerGui.SchoolHUD.MainFrame.Time.Time
 time:GetPropertyChangedSignal("Value"):Connect(function()
     local hour = time.Value
-    if hour == 6 or hour == 15 or hour == 23 or hour == 3 then
+    if hour == 6 then
         task.spawn(performDormSleep)
     end
 end)

@@ -81,6 +81,7 @@ local function performDormSleep()
             return
         end
         teleportToCF(insideCF, 5)
+        task.wait(2)
         if clickWithRetry(getInnerButton, 10) then
             task.wait(5)
             hasClaimedInner = true

@@ -88,6 +88,8 @@ local function performDormSleep()
             setAnchored(false)
             return
         end
+        
+        teleportToCF(bedCF, 3)
     else
         -- Already claimed: go directly to bed
         teleportToCF(bedCF, 3)

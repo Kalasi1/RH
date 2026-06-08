@@ -4,7 +4,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SERVER_URL = "http://localhost:5000/solve"
 
--- ========== WAIT FOR EVERYTHING TO LOAD ==========
 repeat task.wait() until game:IsLoaded()
 
 local LP = Players.LocalPlayer
@@ -16,7 +15,6 @@ while not playerGui do task.wait(); playerGui = LP:FindFirstChild("PlayerGui") e
 local captchaGui = playerGui:FindFirstChild("CardCaptchaGame")
 while not captchaGui do task.wait(); captchaGui = playerGui:FindFirstChild("CardCaptchaGame") end
 
--- ========== SOLVE FUNCTION ==========
 local function solve()
     local captcha = captchaGui:FindFirstChild("CaptchaGame")
     if not captcha then return end
@@ -46,7 +44,6 @@ local function solve()
     if data and data.success and data.index then
         print("Match found! Firing button", data.index)
         
-        -- CORRECT REMOTE PATH
         local remote = ReplicatedStorage:FindFirstChild("CaptchaRemote")
         if remote then
             local setup = remote:FindFirstChild("CaptchaAttempt")
@@ -63,7 +60,6 @@ local function solve()
     end
 end
 
--- ========== TRIGGER ==========
 captchaGui:GetPropertyChangedSignal("Enabled"):Connect(function()
     if captchaGui.Enabled then
         task.wait(math.random(5, 15))
@@ -77,5 +73,3 @@ if captchaGui.Enabled then
         pcall(solve)
     end)
 end
-
-print("✅ Captcha solver ready. Waiting for captcha...")
